@@ -16,9 +16,10 @@ function writeShapeFile(g::SimpleDiGraph, coords::Vector{Tuple{Float64,Float64}}
     end
     data = Dict("dist" => dist)
     gdf = gpd.GeoDataFrame(data=data, geometry=geometry)
+
     println("saving $outfile")
 
     gdf.to_file(outfile, layer="SimpleDiGraph", driver="GPKG")
 
-    return true
+    return outfile
 end

@@ -2,7 +2,7 @@ function EdgeList2SimpleGraph(efile::String, nfile::String)
     es = CSV.read(efile)|>DataFrame
 
     ns = CSV.read(nfile)
-    coords = collect(zip(ns.lat, ns.lon))
+    coords = collect(zip(ns.lon, ns.lat))
 
 
     sort!(es, (:src, :dst), rev=(false, false))
