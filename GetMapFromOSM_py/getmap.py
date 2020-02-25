@@ -1,10 +1,6 @@
 # %%
-import matplotlib.pyplot as plt
 import osmnx as ox
 import networkx as nx
-from descartes import PolygonPatch
-from shapely.geometry import Polygon, MultiPolygon, Point, LineString
-import geopandas as gpd
 import pandas as pd
 
 # %%
@@ -95,18 +91,4 @@ for e in G.edges():
 df = pd.DataFrame({'src': src, 'dst': dst, 'length':lgt})
 efile = "../data/edges_{:}.csv".format(city)
 df.to_csv(efile, index=False)
-
-
-# %%
-# fig, ax = ox.plot_graph(G, fig_height=15, show=False,
-#                         close=False, node_color="#000000", edge_color='#777777',
-#                         axis_off=True, equal_aspect=True, bgcolor='none',
-#                         save=False, filename='teste', file_format='png')
-# ax.scatter([location_point[1]],[location_point[0]], s=[500], c='#ff0000')
-
-
-# %%
 ox.save_graph_shapefile(G, filename=city, folder='../data/')
-
-
-# %%
