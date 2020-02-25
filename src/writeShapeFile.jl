@@ -1,5 +1,5 @@
 function writeShapeFile(g::SimpleDiGraph, coords::Vector{Tuple{Float64,Float64}},
-                      distmx::Array{Float64, 2},
+                      distmx::SparseArrays.SparseMatrixCSC{Float64,Int64},
                       outfile::String = "reduced.gpkg")
     gpd = pyimport("geopandas")
     geom = pyimport("shapely.geometry")

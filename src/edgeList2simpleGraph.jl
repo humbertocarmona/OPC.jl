@@ -10,7 +10,7 @@ function EdgeList2SimpleGraph(efile::String, nfile::String)
     nes = size(es, 1)  # number od edges
     nns = size(ns, 1)  # number of nodes
 
-    distmx = zeros(nns, nns)
+    distmx = spzeros(nns, nns)
     g = SimpleDiGraph(nns)
 
     for i = 1:nes
