@@ -13,4 +13,5 @@ include("edgeList2simpleGraph.jl")
 include("writeShapeFile.jl")
 include("getGoogleDirection.jl")
 include("getTravelTimes.jl")
+include("getMapOSM.jl")
 end # module
