@@ -1,6 +1,6 @@
 using OPC
 using LightGraphs
-using JLD
+using JLD, HDF5
 
 efile = "data/edges_fortaleza.csv"
 nfile = "data/nodes_fortaleza.csv"
@@ -10,20 +10,12 @@ googlekey = "AIzaSyApQzC_OLdxiITS7ynh_XsWZZOU8XOKQHs"
 # deptime = 0
 
 g, coords, distmx, d = OPC.EdgeList2SimpleGraph(efile, nfile)
-# OPC.writeShapeFile(g, coords, distmx,"data/fortaleza.gpkg")
 # datajson, output = OPC.getGoogleDirection(origin, destination, deptime, key)
-dd, oo,  tt = OPC.getTravelTimes(g, coords, googlekey)
+# data, output,  traveltimet = OPC.getTravelTimes(g, coords, googlekey)
+# traveltime = load("data/fortaleza_traveltime.jld", "traveltime")
+# OPC.writeShapeFile(g, coords, distmx,traveltime,"data/fortaleza.gpkg")
 
-i = 1
-for e in edges(g)
-    s, d = e.src, e.dst
-    println(i, " ", tt[(s,d)])
-    if i==10
-        break
-    end
-    global i = i + 1
-end
 
-save("fortaleza.jld", "data", dd)
-save("fortaleza_output.jld", "output", oo)
-save("fortaleza_traveltime.jld", "traveltime", tt)
+# save("data/fortaleza.jld", "data", dd)
+# save("data/fortaleza_output.jld", "output", oo)
+# save("fortaleza_traveltime.jld", "traveltime", tt)

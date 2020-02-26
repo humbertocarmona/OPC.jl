@@ -29,6 +29,9 @@ function getTravelTimes(g::SimpleDiGraph,
 
         datadic[(s,d)] = datajson
         outputdic[(s,d)] = output
+        if i==10
+            break
+        end
         i = i + 1
     end
     return datadic, outputdic, travelTimes
