@@ -3,8 +3,8 @@ using LightGraphs
 using JLD, HDF5
 using Plots
 
-efile = "data/sanfrancisco_edges.csv"
-nfile = "data/sanfrancisco_nodes.csv"
+efile = "data/fortaleza_edges.csv"
+nfile = "data/fortaleza_nodes.csv"
 googlekey = "AIzaSyApQzC_OLdxiITS7ynh_XsWZZOU8XOKQHs"
 
 # get network from Open Street Map
@@ -20,10 +20,12 @@ g, coords, distmx, d = OPC.buildNetwork(efile, nfile)
 
 # get all travelTimes for all edges in g
 # datajson, output,  traveltimet = OPC.getTravelTimes(g, coords, googlekey)
-# traveltime = load("data/fortaleza_traveltime.jld", "traveltime")
+traveltime = load("data/fortaleza_traveltime.jld", "traveltime")
 
 # save shapefile from g
 # OPC.writeShapeFile(g, coords, distmx,traveltime,"data/fortaleza.gpkg")
 
 res = OPC.cellList(coords; wcell=100.0)
 OD = OPC.odMatrix(4500.0, res; nOd=1000, nDstOrg=1)
+
+OPC.crackOptimalPaths(g,934, 41175, traveltime, distmx)
