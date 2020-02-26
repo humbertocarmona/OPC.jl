@@ -4,7 +4,8 @@ function writeShapeFile(g::SimpleDiGraph, coords::Vector{Tuple{Float64,Float64}}
                       outfile::String = "reduced.gpkg")
     gpd = pyimport("geopandas")
     geom = pyimport("shapely.geometry")
-    pos = [geom.Point(c) for c in coords]
+
+    pos = [geom.Point((lon, lat)) for (lat, lon) in coords]
     links = collect(edges(g))
 
     dist  = []

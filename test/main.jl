@@ -1,6 +1,7 @@
 using OPC
 using LightGraphs
 using JLD, HDF5
+using Plots
 
 efile = "data/sanfrancisco_edges.csv"
 nfile = "data/sanfrancisco_nodes.csv"
@@ -13,7 +14,7 @@ googlekey = "AIzaSyApQzC_OLdxiITS7ynh_XsWZZOU8XOKQHs"
 #                   city = "sanfrancisco")
 
 # build LightGraph SimpleDiGraph from files or dataframes
-g, coords, distmx, d = OPC.EdgeList2SimpleGraph(efile, nfile)
+g, coords, distmx, d = OPC.buildNetwork(efile, nfile)
 # or
 # g, coords, distmx, d = OPC.EdgeList2SimpleGraph(dfe, dfn)
 
@@ -24,4 +25,5 @@ g, coords, distmx, d = OPC.EdgeList2SimpleGraph(efile, nfile)
 # save shapefile from g
 # OPC.writeShapeFile(g, coords, distmx,traveltime,"data/fortaleza.gpkg")
 
-OPC.cellList(coords)
+res = OPC.cellList(coords; wcell=100.0)
+OD = OPC.odMatrix(4500.0, res; nOd=1000, nDstOrg=1)

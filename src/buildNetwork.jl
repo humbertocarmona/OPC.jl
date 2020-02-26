@@ -1,13 +1,13 @@
-function EdgeList2SimpleGraph(efile::String, nfile::String)
+function buildNetwork(efile::String, nfile::String)
     es = CSV.read(efile)|>DataFrame
     ns = CSV.read(nfile)|>DataFrame
-    g, coords, distmx, eidic = EdgeList2SimpleGraph(es, ns)
+    g, coords, distmx, eidic = buildNetwork(es, ns)
     return g, coords, distmx, eidic
 end
 
 
-function EdgeList2SimpleGraph(es::DataFrame, ns::DataFrame)
-    coords = collect(zip(ns.lon, ns.lat))
+function buildNetwork(es::DataFrame, ns::DataFrame)
+    coords = collect(zip(ns.lat, ns.lon))
 
 
     sort!(es, (:src, :dst), rev=(false, false))

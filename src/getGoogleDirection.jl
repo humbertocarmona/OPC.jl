@@ -4,12 +4,12 @@ function getGoogleDirection(origin::Tuple{Float64,Float64},
                             key::String)
 
     """
-        origin = (lon, lat)
-        destination = (lon, lat)
+        origin = (lat, lon)
+        destination = (lat, lon)
         key =  directions api key
     """
 
-    ostr = "origin=$(origin[2]),$(origin[1])"
+    ostr = "origin=$(origin[1]),$(origin[2])"
     dstr = "destination=$(destination[2]),$(destination[1])"
     qstr = "$ostr&$dstr&travel_mode=driving&units=metric&key=$key"
     url = "https://maps.googleapis.com/maps/api/directions/json?$qstr"
