@@ -1,7 +1,12 @@
 function EdgeList2SimpleGraph(efile::String, nfile::String)
     es = CSV.read(efile)|>DataFrame
+    ns = CSV.read(nfile)|>DataFrame
+    g, coords, distmx, eidic = EdgeList2SimpleGraph(es, ns)
+    return g, coords, distmx, eidic
+end
 
-    ns = CSV.read(nfile)
+
+function EdgeList2SimpleGraph(es::DataFrame, ns::DataFrame)
     coords = collect(zip(ns.lon, ns.lat))
 
 

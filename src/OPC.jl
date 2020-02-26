@@ -14,4 +14,6 @@ include("writeShapeFile.jl")
 include("getGoogleDirection.jl")
 include("getTravelTimes.jl")
 include("getMapOSM.jl")
+include("crackOptimumPaths.jl")
+
 end # module

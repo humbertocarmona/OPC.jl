@@ -2,6 +2,7 @@ function getTravelTimes(g::SimpleDiGraph,
                         coords::Vector{Tuple{Float64,Float64}},
                         key::String)
     """
+        gets travel times for all edges using google directions api
         coods = vector of (lon, lat)
         g =  simple directed graph created by edgeList2simpleGraph
     """

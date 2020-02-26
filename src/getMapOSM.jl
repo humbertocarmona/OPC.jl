@@ -6,6 +6,29 @@ function getMapOSM(;place::String="",
                     city::String="",
                     )
 
+    """
+        download map from Open Street Map using python osmnx
+        require python:
+            osmnx, networkx
+        arguments:
+            place = string description of the place
+            location =  tuple (lat, lon) centre of download area (if not place)
+            radius = radius of the download area (meters)
+            nfile, efile =  output files for nodes and edges
+            city =  name of the city for saving shapefile
+        examples:
+        G = OPC.getMapOSM(place="San Francisco, California, USA",
+                          nfile="data/sanfrancisco_nodes.csv",
+                          efile="data/sanfrancisco_edges.csv",
+                          city = "sanfrancisco")
+        or
+        G = OPC.getMapOSM(location=(-3.7327, -38.5270),
+                          radius=15000.0,
+                          nfile"data/fortaleza_nodes.csv",
+                          efile"data/fortaleza_edges.csv",
+                          city::String="fortaleza")
+    """
+
     ox = pyimport("osmnx")
     nx = pyimport("networkx")
 
@@ -66,5 +89,5 @@ function getMapOSM(;place::String="",
     if length(city) > 0
         ox.save_graph_shapefile(G, filename=city, folder="data/")
     end
-    return 1
+    return dfe, dfn
 end
