@@ -11,7 +11,6 @@ function buildNetwork(es::DataFrame, ns::DataFrame)
 
 
     sort!(es, (:src, :dst), rev=(false, false))
-
     nes = size(es, 1)  # number od edges
     nns = size(ns, 1)  # number of nodes
 

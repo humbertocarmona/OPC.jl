@@ -22,7 +22,6 @@ function odMatrix(ℓ::Float64,
     while n < nOd && maxorig < 10*nOd
         org = rand(1:nnodes)
         rOrg = collect(pos[org])
-        println("$n org = $org")
         for k=1:nDstOrg
             #find a nonempty cell, size dx x dy within ℓ, random angle
             foundCell = false
@@ -52,6 +51,7 @@ function odMatrix(ℓ::Float64,
                         foundDst = (abs(d-ℓ) < δ) && ((org,dst) ∉ odMatrix)
                         if foundDst
                             push!(odMatrix, (org,dst))
+                            println("\t$(n+1) $org, $dst")
                             n = n + 1
                             if n ≥ nOd
                                 break

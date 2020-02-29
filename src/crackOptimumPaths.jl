@@ -1,15 +1,44 @@
-function crackOptimalPaths(g::SimpleDiGraph, org::Integer, dst::Integer,
-                           traveltime::Dict{Any,Any},
-    distmx::SparseArrays.SparseMatrixCSC{Float64,Int64}; N::Int64 = 0)
+function crackOptimalPaths(g::SimpleDiGraph, org::Int64, dst::Int64,
+                           weightmx::SparseMatrixCSC{Float64,Int64};
+                           nrem::Integer = 0)
 
-    if N == 0
-        N = nv(g)
+
+    gr = copy(g)
+    N = nv(gr)
+    if nrem == 0
+        nrem = N
     end
-    es = [(e.src, e.dst) for e in edges(g)]
-    weightmx = [traveltime[e] for e in es]  # to to keep the order
-    dij = LightGraphs.dijkstra_shortest_paths(g, org, weightmx)
-    target = dest # first target is the destination
-    sv = dij.predecessors[dest]
+    dij = LightGraphs.dijkstra_shortest_paths(gr, org, weightmx, allpaths=true)
+    sv = dij.predecessors[dst]
     havepath = size(sv,1) > 0
-    print(havepath)
+
+    removedmx = spzeros(N,N)
+    n = 1
+    while havepath && n < nrem
+        # find maximum weight edge ----
+        j = dst # first target is the destination
+        i = dij.predecessors[j][1]
+        ir, jr = i,j
+        wmax =  weightmx[i,j]
+        while i != org
+            j = i
+            i = dij.predecessors[j][1]
+            w =  weightmx[i,j]
+            if w > wmax
+                wmax = w
+                ir, jr = i, j
+            end
+        end # go through this path
+        removedmx[ir, jr] = n
+
+        rem_edge!(gr, ir, jr)
+        dij = dijkstra_shortest_paths(gr, org, weightmx, allpaths=true) # re-eval Dijkstra
+        sv = dij.predecessors[dst]
+        havepath = size(sv,1) > 0
+        # remove this edge and find new shortest path
+        n = n + 1
+    end # while havepath
+    println()
+    println("nremoved = $(n-1)")
+    return gr, removedmx
 end
