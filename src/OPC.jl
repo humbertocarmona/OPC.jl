@@ -14,13 +14,14 @@ using Statistics
 using LinearAlgebra
 
 
-include("buildNetwork.jl")
-include("writeShapeFile.jl")
 include("getGoogleDirection.jl")
 include("getTravelTimes.jl")
 include("getMapOSM.jl")
+include("buildCityNetwork.jl")
+include("buildSquareNetwork.jl")
 include("cellList.jl")
 include("odMatrix.jl")
-include("crackOptimumPaths.jl")
+include("crackOptimalPaths.jl")
+include("writeShapeFile.jl")
 
 end # module

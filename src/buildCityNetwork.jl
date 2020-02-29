@@ -1,4 +1,4 @@
-function buildNetwork(efile::String, nfile::String)
+function buildCityNetwork(efile::String, nfile::String)
     es = CSV.read(efile)|>DataFrame
     ns = CSV.read(nfile)|>DataFrame
     g, coords, distmx, eidic = buildNetwork(es, ns)
@@ -6,7 +6,7 @@ function buildNetwork(efile::String, nfile::String)
 end
 
 
-function buildNetwork(es::DataFrame, ns::DataFrame)
+function buildCityNetwork(es::DataFrame, ns::DataFrame)
     coords = collect(zip(ns.lat, ns.lon))
 
 

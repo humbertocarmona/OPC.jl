@@ -15,7 +15,7 @@ nfile = "data/fortaleza_nodes.csv"
 #                   city = "sanfrancisco")
 
 # build LightGraph SimpleDiGraph from files or dataframes
-g, coords, distmx, d = OPC.buildNetwork(efile, nfile)
+g, coords, distmx, d = OPC.buildCityNetwork(efile, nfile)
 # or
 # g, coords, distmx, d = OPC.EdgeList2SimpleGraph(dfe, dfn)
 
