@@ -16,7 +16,7 @@ function dist(β)
 end
 
 function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
-                            β::Float64=0.002, seed::Int64 = 123)
+                            β::Float64=0.002, seed::Int64 = 123, pbcx::Bool = true)
     """
         nx, ny: network size
         p: probability of bidirect edges
@@ -47,7 +47,6 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
     org = nvertices+1
     dst = nvertices+2
     distmx = spzeros(nnodes,nnodes)
-    edgenumber = []
 
     en = 0
     center = [-3.7327, -38.5270]
@@ -63,8 +62,7 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
             #add horizontal
             if i<nx
                 d=ij2n(i+1,j, nx)
-                ϵ = dist(β)
-                unidirected = p < Random.rand()    # bidirected edge?
+                unidirected = p > Random.rand()    # bidirected edge?
                 if unidirected
                     right = Random.rand()>0.5 # choose direction
                     if right
@@ -72,13 +70,11 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
                         add_edge!(g, s,d)
                         distmx[s,d] = ϵ
                         en+=1
-                        push!(edgenumber, en)
                     else
                         ϵ = dist(β)
                         add_edge!(g, d,s)
                         distmx[d,s] = ϵ
                         en+=1
-                        push!(edgenumber, en)
                     end
                 else # add bi-directed
                     ϵ = dist(β)
@@ -89,16 +85,39 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
                     add_edge!(g, d,s)
                     distmx[d,s] = ϵ
                     en+=1
-                    push!(edgenumber, en)
+                end
+            elseif pbcx
+                d = ij2n(1,j, nx)
+                unidirected = p > Random.rand()    # bidirected edge?
+                if unidirected
+                    right = Random.rand()>0.5 # choose direction
+                    if right
+                        ϵ = dist(β)
+                        add_edge!(g, s,d)
+                        distmx[s,d] = ϵ
+                        en+=1
+                    else
+                        ϵ = dist(β)
+                        add_edge!(g, d,s)
+                        distmx[d,s] = ϵ
+                        en+=1
+                    end
+                else # add bi-directed
+                    ϵ = dist(β)
+                    add_edge!(g, s,d)
+                    distmx[s,d] = ϵ
+
+                    ϵ = dist(β)
+                    add_edge!(g, d,s)
+                    distmx[d,s] = ϵ
+                    en+=1
                 end
             end
 
             #add vertical
             if j<ny
                 d=ij2n(i,j+1, nx)
-
-
-                unidirected = p < Random.rand()    # bidirected edge?
+                unidirected = p > Random.rand()    # bidirected edge?
                 if unidirected
                     up = Random.rand()>0.5 # choose direction
                     if up
@@ -125,14 +144,16 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
     end
 
     # connects origin and destination
-    for d=1:nx
+    for j=1:ny  #left column
+        d = ij2n(1,j, nx)
         add_edge!(g, org, d)
         distmx[org,d] = 0.0
     end
-    push!(coords, Tuple(center+[-1.0*dx, 0.5*(ny-1)*dy]))
-    push!(coords, Tuple(center+[(nx+1.0)*dx, 0.5*(ny-1)*dy]))
+    push!(coords, Tuple(center+[0.5*(nx-1.0)*dx, -1.0*dy]))
+    push!(coords, Tuple(center+[0.5*(nx-1.0)*dx, (ny+1.0)*dy]))
 
-    for s=nvertices-nx+1:nvertices
+    for j=1:ny #right column
+        s = ij2n(nx, j, nx)
         add_edge!(g, s, dst)
         distmx[s,dst] = 0.0
     end
