@@ -1,0 +1,72 @@
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/Plots/ld3vC_jCtmj.ji because module SortingAlgorithms [a2af1166-a08f-5f64-846c-94a0d3cef48c] is already loaded and incompatible.
+└ @ Base loading.jl:1427
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/FreeType2_jll/AzWNe_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/Zlib_jll/xjq3Q_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/Bzip2_jll/biC9V_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/FriBidi_jll/tf6pT_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/GR/NDU5Y_jCtmj.ji because it is for file /home/humberto/.julia/packages/GR/oiZD3/src/GR.jl) not file /home/humberto/.julia/packages/GR/tPkHV/src/GR.jl
+└ @ Base loading.jl:1459
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/RecipesBase/8e2Mm_jCtmj.ji because it is for file /home/humberto/.julia/packages/RecipesBase/zBoFG/src/RecipesBase.jl) not file /home/humberto/.julia/packages/RecipesBase/G4s6f/src/RecipesBase.jl
+└ @ Base loading.jl:1459
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/FFMPEG/TGvga_jCtmj.ji because it is for file /home/humberto/.julia/packages/FFMPEG/guN1x/src/FFMPEG.jl) not file /home/humberto/.julia/packages/FFMPEG/vocw2/src/FFMPEG.jl
+└ @ Base loading.jl:1459
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/StatsBase/EZjIG_jCtmj.ji because module DataStructures [864edb3b-99cc-5e75-8d2d-829cb0a9cfe8] is already loaded and incompatible.
+└ @ Base loading.jl:1427
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/PlotThemes/QxsMm_jCtmj.ji because module FixedPointNumbers [53c48c17-4a7d-5ca2-90c5-79b7896eea93] is already loaded and incompatible.
+└ @ Base loading.jl:1427
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/PlotUtils/YveHG_jCtmj.ji because module FixedPointNumbers [53c48c17-4a7d-5ca2-90c5-79b7896eea93] is already loaded and incompatible.
+└ @ Base loading.jl:1427
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/GeometryTypes/OuQ1Z_jCtmj.ji because module FixedPointNumbers [53c48c17-4a7d-5ca2-90c5-79b7896eea93] is already loaded and incompatible.
+└ @ Base loading.jl:1427
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/LaTeXStrings/H4HGh_jCtmj.ji because it is for file /home/humberto/.julia/packages/LaTeXStrings/uqAAR/src/LaTeXStrings.jl) not file /home/humberto/.julia/packages/LaTeXStrings/JOBV0/src/LaTeXStrings.jl
+└ @ Base loading.jl:1459
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/LsqFit/GCdY9_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/DiffResults/vlfPe_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/Distributions/xILW0_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/OpenSpecFun_jll/TDl1L_jCtmj.ji because it is for file /home/humberto/.julia/packages/OpenSpecFun_jll/XrUb6/src/OpenSpecFun_jll.jl) not file /home/humberto/.julia/packages/OpenSpecFun_jll/G7uZt/src/OpenSpecFun_jll.jl
+└ @ Base loading.jl:1459
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/PDMats/wuzEE_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/Arpack/X5VZL_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/OpenBLAS_jll/vLkFP_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/Arpack_jll/m4kdm_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/QuadGK/hq5Ol_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/Rmath/0iTqX_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/SpecialFunctions/78gOt_jCtmj.ji because module OpenSpecFun_jll [efe28fd5-8261-553b-a9e1-b2916fc3738e] is already loaded and incompatible.
+└ @ Base loading.jl:1427
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/StatsFuns/530lR_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/FillArrays/2Dg1l_jCtmj.ji because it is for file /home/humberto/.julia/packages/FillArrays/Aj0C4/src/FillArrays.jl) not file /home/humberto/.julia/packages/FillArrays/UptEJ/src/FillArrays.jl
+└ @ Base loading.jl:1459
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/OptimBase/U5DmT_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/NLSolversBase/NEDD6_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/CommonSubexpressions/VMTKN_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/ForwardDiff/k0ETY_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/DiffRules/x2ZNk_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/ArrayInterface/7bROb_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: Rejecting cache file /home/humberto/.julia/compiled/v1.3/PyPlot/oatAj_jCtmj.ji due to it containing an invalid cache header
+└ @ Base loading.jl:1410
+┌ Debug: coords = Tuple{Float64,Float64}[(-3.7327, -38.527), (-3.7327, -38.5260997877), (-3.7327, -38.5251995754)]
+└ @ OPC /home/humberto/GoogleDrive/github/OPC.jl/src/odMatrix.jl:19
+┌ Debug: coords = Tuple{Float64,Float64}[(-3.7327, -38.527), (-3.7327, -38.5260997877), (-3.7327, -38.5251995754)]
+└ @ OPC /home/humberto/GoogleDrive/github/OPC.jl/src/odMatrix.jl:19
+┌ Debug: coords = Tuple{Float64,Float64}[(-3.7327, -38.527), (-3.7327, -38.5260997877), (-3.7327, -38.5251995754)]
+└ @ OPC /home/humberto/GoogleDrive/github/OPC.jl/src/odMatrix.jl:19

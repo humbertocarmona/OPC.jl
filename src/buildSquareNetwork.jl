@@ -16,7 +16,9 @@ function dist(β)
 end
 
 function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
-                            β::Float64=0.002, seed::Int64 = 123, pbcx::Bool = true)
+                            β::Float64=0.002, seed::Int64 = 123,
+                            od::Bool = true,
+                            pbc::Bool = false)
     """
         nx, ny: network size
         p: probability of bidirect edges
@@ -40,17 +42,20 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
        I=1    2    3    4    5    6      J
     """
 
+
     Random.seed!(seed)
     nvertices = nx*ny
-    nnodes = nvertices + 2 # last 2 are origin-destination
+    nnodes = nvertices
+    if od
+        nnodes = nvertices + 2 # last 2 are origin-destination
+    end
     g = SimpleDiGraph(nnodes)
-    org = nvertices+1
-    dst = nvertices+2
-    distmx = spzeros(nnodes,nnodes)
+    weightmx = spzeros(nnodes,nnodes)
 
     en = 0
     center = [-3.7327, -38.5270]
-    dx = dy = 9.0432e-4
+    dx = 9.043317e-4
+    dy = 9.002123e-4
     coords =  Tuple{Float64, Float64}[]
     # interior
     for i in 1:nx
@@ -68,25 +73,25 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
                     if right
                         ϵ = dist(β)
                         add_edge!(g, s,d)
-                        distmx[s,d] = ϵ
+                        weightmx[s,d] = ϵ
                         en+=1
                     else
                         ϵ = dist(β)
                         add_edge!(g, d,s)
-                        distmx[d,s] = ϵ
+                        weightmx[d,s] = ϵ
                         en+=1
                     end
                 else # add bi-directed
                     ϵ = dist(β)
                     add_edge!(g, s,d)
-                    distmx[s,d] = ϵ
+                    weightmx[s,d] = ϵ
 
                     ϵ = dist(β)
                     add_edge!(g, d,s)
-                    distmx[d,s] = ϵ
+                    weightmx[d,s] = ϵ
                     en+=1
                 end
-            elseif pbcx
+            elseif pbc
                 d = ij2n(1,j, nx)
                 unidirected = p > Random.rand()    # bidirected edge?
                 if unidirected
@@ -94,22 +99,22 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
                     if right
                         ϵ = dist(β)
                         add_edge!(g, s,d)
-                        distmx[s,d] = ϵ
+                        weightmx[s,d] = ϵ
                         en+=1
                     else
                         ϵ = dist(β)
                         add_edge!(g, d,s)
-                        distmx[d,s] = ϵ
+                        weightmx[d,s] = ϵ
                         en+=1
                     end
                 else # add bi-directed
                     ϵ = dist(β)
                     add_edge!(g, s,d)
-                    distmx[s,d] = ϵ
+                    weightmx[s,d] = ϵ
 
                     ϵ = dist(β)
                     add_edge!(g, d,s)
-                    distmx[d,s] = ϵ
+                    weightmx[d,s] = ϵ
                     en+=1
                 end
             end
@@ -123,40 +128,56 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
                     if up
                         ϵ = dist(β)
                         add_edge!(g, s,d)
-                        distmx[s,d] = ϵ
+                        weightmx[s,d] = ϵ
                         en+=1
                     else
                         ϵ = dist(β)
                         add_edge!(g, d,s)
-                        distmx[d,s] = ϵ
+                        weightmx[d,s] = ϵ
                     end
                     else # add bi-directed - each direction has a different weight
                     ϵ = dist(β)
                     add_edge!(g, s,d)
-                    distmx[s,d] = ϵ
+                    weightmx[s,d] = ϵ
 
                     ϵ = dist(β)
                     add_edge!(g, d,s)
-                    distmx[d,s] = ϵ
+                    weightmx[d,s] = ϵ
                 end
             end
         end
     end
 
-    # connects origin and destination
-    for j=1:ny  #left column
-        d = ij2n(1,j, nx)
-        add_edge!(g, org, d)
-        distmx[org,d] = 0.0
-    end
-    push!(coords, Tuple(center+[0.5*(nx-1.0)*dx, -1.0*dy]))
-    push!(coords, Tuple(center+[0.5*(nx-1.0)*dx, (ny+1.0)*dy]))
+    if od # connects origin and destination
+        org = nvertices+1
+        dst = nvertices+2
+        for j=1:ny  #left column
+            d = ij2n(1,j, nx)
+            add_edge!(g, org, d)
+            weightmx[org,d] = 0.0
+        end
 
-    for j=1:ny #right column
-        s = ij2n(nx, j, nx)
-        add_edge!(g, s, dst)
-        distmx[s,dst] = 0.0
+
+        for j=1:ny #right column
+            s = ij2n(nx, j, nx)
+            add_edge!(g, s, dst)
+            weightmx[s,dst] = 0.0
+        end
+        push!(coords, Tuple(center+[0.5*(nx-1.0)*dx, -1.0*dy]))
+        push!(coords, Tuple(center+[0.5*(nx-1.0)*dx, (ny+1.0)*dy]))
     end
 
-    return g, coords, distmx, 0
+    # just for debbuginh
+    # i = 4
+    # j = 3
+    # o = ij2n(i,j, nx)
+    # po = LLA(coords[o][1],coords[o][2],0.0)
+    # for j = 1:10
+    #     d = ij2n(i,j,nx)
+    #     pd = LLA(coords[d][1],coords[d][2],0.0)
+    #     dist = distance(po, pd)
+    #     @debug("$o - $d  = $(dist)")
+    # end
+
+    return g, coords, weightmx, 0
 end

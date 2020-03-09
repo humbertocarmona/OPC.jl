@@ -1,7 +1,7 @@
 function buildCityNetwork(efile::String, nfile::String)
     es = CSV.read(efile)|>DataFrame
     ns = CSV.read(nfile)|>DataFrame
-    g, coords, distmx, eidic = buildNetwork(es, ns)
+    g, coords, distmx, eidic = buildCityNetwork(es, ns)
     return g, coords, distmx, eidic
 end
 

@@ -12,7 +12,12 @@ using Random
 using Geodesy
 using Statistics
 using LinearAlgebra
+using Logging
 
+function __init__()
+    global logger = SimpleLogger(stdout, Logging.Info)
+    global_logger(logger)
+end
 
 include("getGoogleDirection.jl")
 include("getTravelTimes.jl")
@@ -23,5 +28,5 @@ include("cellList.jl")
 include("odMatrix.jl")
 include("crackOptimalPaths.jl")
 include("writeShapeFile.jl")
-
+include("writeGML.jl")
 end # module

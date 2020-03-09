@@ -1,51 +1,51 @@
 function cellList(coords::Vector{Tuple{Float64,Float64}};
-                  wcell::Float64 =200.0)
+                  cellWidth::Float64 = 100.0)
     """
         builds cell list for finding (origin, destination) within
         a given distance
 
+        use (lat,lon) to build the square lattice...
 
     """
 
+    #  100 meters
+    dx = 9.043317e-4*cellWidth/100.0
+    dy = 9.002123e-4*cellWidth/100.0
 
-    nnodes = size(coords,1)
+    n = size(coords,1)
+    lat = [coords[i][1] for i=1:n]
+    lon = [coords[i][2] for i=1:n]
+    Lx = maximum(lon) - minimum(lon)
+    Ly = maximum(lat) - minimum(lat)
+    x = lon .-  minimum(lon)
+    y = lat .-  minimum(lat)
 
-    x = []
-    y = []
-    for coord in coords
-        lla = Geodesy.LLA(coord[1], coord[2], 0.0)
-        recef = Geodesy.ECEF(lla, wgs84)
-        push!(x, recef[1])
-        push!(y, recef[2])
-    end
-    xmin, xmax = minimum(x), maximum(x)
-    ymin, ymax = minimum(y), maximum(y)
-    x = x .- xmin  #start from origin
-    y = y .- ymin
 
-    pos = [(x[i], y[i]) for i=1:nnodes]
 
-    Lx = xmax-xmin # network size
-    Ly = ymax-ymin
-    nx = Int(ceil(Lx/wcell))
-    ny = Int(ceil(Ly/wcell))
-    dx = Lx/(nx-1)
-    dy = Ly/(ny-1)
+    nx = Int(ceil(Lx/dx))+1
+    ny = Int(ceil(Ly/dx))+1
+    @debug("agora $nx, $ny")
+
     cells = spzeros(Int, nx, ny)
-    next = spzeros(Int, nnodes)
-    for n in 1:nnodes
-        i = Int(floor(x[n]/dx))+1
-        j = Int(floor(y[n]/dy))+1
+    next = spzeros(Int, n)
+    for node in 1:n
+        i = Int(floor(x[node]/dx))+1
+        j = Int(floor(y[node]/dy))+1
         if i > nx || j > ny
             println("($i, $j) vs. ($nx, $ny)")
         end
-        p = cells[i,j]
-        cells[i,j] = n
-        next[n] = p
+        last = cells[i,j]
+        cells[i,j] = node
+        next[n] = last
     end
-    result = Dict("pos"=> pos,
+
+
+    pos = [[x[i], y[i]] for i = 1:n]
+
+    result = Dict("coords"=> coords,
+                  "pos"=> pos,
                   "dx"=> dx, "dy"=>dy,
-                  "nx"=> nx, "ny"=> ny,
+                  "nx"=> nx,"ny"=> ny,
                   "cells"=>cells,
                   "next"=>next)
 end
