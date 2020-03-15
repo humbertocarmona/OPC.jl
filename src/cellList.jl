@@ -20,11 +20,9 @@ function cellList(coords::Vector{Tuple{Float64,Float64}};
     x = lon .-  minimum(lon)
     y = lat .-  minimum(lat)
 
-
-
     nx = Int(ceil(Lx/dx))+1
     ny = Int(ceil(Ly/dx))+1
-    @debug("agora $nx, $ny")
+    #@debug("agora $nx, $ny")
 
     cells = spzeros(Int, nx, ny)
     next = spzeros(Int, n)

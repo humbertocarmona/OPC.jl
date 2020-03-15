@@ -11,9 +11,9 @@ pyplot()
 PyPlot.rc("text", usetex = "true")
 PyPlot.rc("font", family = "CMU Serif")
 
-df = CSV.read("data/nr_p0.6_beta0.005_500.csv")
-dfb = CSV.read("data/nr_Boston.csv")
-dfm = CSV.read("data/nr_Manhattan.csv")
+df = CSV.read("results/square-p0.6-beta0.005-500-nr.csv")
+dfb = CSV.read("data/boston-nr.csv")
+dfm = CSV.read("data/manthattam-nr.csv")
 @. model(x, p) = p[2] * x^p[1]
 
 fit = curve_fit(model, collect(df.L), collect(df.nr), [1.0, 1.0])
@@ -29,8 +29,8 @@ p1 = plot(
     fg_legend = :white,
     dpi = 150,
     framestyle = :box,
-    xaxis =(L"\ell",  font(15)),
-    yaxis = (L"N_r",  font(15)),
+    xaxis =(L"\ell", :log10, font(15)),
+    yaxis = (L"N_r", :log10, font(15)),
     grid = false,
     # thickness_scaling=1.1
 )
@@ -47,4 +47,4 @@ scatter!(dfb.L, dfb.nr,label = L"Boston",
 scatter!(dfm.L, dfm.nr,label = L"Manhattan",
                   markersize=5, c=3, yerror=dfm.nrerr, lw=2)
 
-savefig(p1, "Results/nr.png")
+# savefig(p1, "Results/nr.png")

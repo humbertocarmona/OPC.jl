@@ -1,16 +1,57 @@
 using OPC
-using LightGraphs
-using JLD, HDF5
-using SparseArrays
+using Geodesy
+# using LightGraphs
+# using SparseArrays
 using Dates
 using Statistics
 using CSV, DataFrames
-using LaTeXStrings
-using LsqFit
-using Printf
-using Plots
-using Plots.PlotMeasures
 using Logging
+using ArgParse
+
+# googlekey = "AIzaSyApQzC_OLdxiITS7ynh_XsWZZOU8XOKQHs"
+
+
+function parse_commandline()
+    s = ArgParseSettings()
+
+    @add_arg_table! s begin
+        "--l1"
+            arg_type = Float64
+            default = 1000.0
+        "--l2"
+            arg_type = Float64
+            default = 1000.0
+        "--dl"
+            arg_type = Float64
+            default = 500.0
+        "--nsamples", "-n"
+            arg_type = Int
+            default = 500
+        "--run", "-r"
+            arg_type = Int
+            default = 1
+        "--efile"
+            arg_type = String
+            required = true
+        "--nfile"
+            arg_type = String
+            required = true
+    end
+
+    return parse_args(s)
+end
+
+parsed_args = parse_commandline()
+
+l1 = parsed_args["l1"]
+l2 = parsed_args["l2"]
+dl = parsed_args["dl"]
+ns = parsed_args["nsamples"]
+run = parsed_args["run"]
+efile = parsed_args["efile"]
+nfile = parsed_args["nfile"]
+city = split(nfile,"/")[end]
+city = split(city,"-")[1]
 
 """
     to get get network from Open Street Map
@@ -28,69 +69,40 @@ using Logging
         datajson, output,  traveltimet = OPC.getTravelTimes(g, coords, googlekey)
 """
 
+tinit = Dates.format(now(), "ddmmyy-HHhMM-SS")
+println("")
+println(tinit)
 
-pyplot()
-PyPlot.rc("text", usetex = "true")
-PyPlot.rc("font", family = "CMU Serif")
-
-io = open("log.txt", "w+")
+io = open("logs/run$run-$tinit.log", "w+")
 logger = SimpleLogger(io, Logging.Debug)
 global_logger(logger)
 
 
-city = "fortaleza"
-efile = "data/fortaleza_edges1.csv"
-nfile = "data/fortaleza_nodes.csv"
-# googlekey = "AIzaSyApQzC_OLdxiITS7ynh_XsWZZOU8XOKQHs"
-
-df = DataFrame(L = [], nr = [], err = [])
-fnamecsv = "data/tt.csv"
-L = [500.0, 1000.0, 1500.0, 2000.0, 3500.0, 4000.0]
-nsamples = 100
-g, coords, distmx, d = OPC.buildCityNetwork(efile, nfile)
-weightmx = getWeights()
-
+L = collect(l1:dl:l2)
+g, coords, distmx, weightmx, d = OPC.buildCityNetwork(efile, nfile)
+rcellList = OPC.cellList(coords; cellWidth=100.0)
 with_logger(logger) do
+    @info(Dates.format(Dates.now(), "yy-mm-dd H:M"))
+    flush(io)
     for ℓ in L
         seed = Dates.value(DateTime(Dates.now()))
-        res_cellList = OPC.cellList(coords; wcell=100.0)
-        OD = OPC.odMatrix(ℓ, res_cellList; nSamples=nsamples, nDstOrg=1, seed=seed)
-        global nremoved = []
-        for sample=1:nsamples
+        OD = OPC.odMatrix(ℓ, rcellList; ns=ns, seed=seed, δ = 0.01)
+        nremoved = []
+        dist = []
+        for sample=1:ns
             (orig, dest)  = OD[sample]
+            p1 = LLA(coords[orig][1], coords[orig][2], 0.0)
+            p2 = LLA(coords[dest][1], coords[dest][2], 0.0)
             nrem, gr, rmmx = OPC.crackOptimalPaths(g, orig, dest, weightmx)
             if mod(sample, 10)==0
-                @debug("ℓ = $ℓ, sample = $sample, od = ($orig, $dest) removed = $nrem")
+                @debug("ℓ = $ℓ, sample = $sample, $(mean(nremoved))")
                 flush(io)
             end
-            if sample == 1 && L == 2000.0
-                fname = "data/$(city)_L$(ℓ)_map.gpkg"
-                OPC.writeShapeFile(g, coords, rmmx, fname)
-            end
             push!(nremoved, nrem)
+            push!(dist, distance(p1,p2))
         end
-        μ = mean(nremoved)
-        ϵ = std(nremoved)/sqrt(nsamples)
-        push!(df, [ℓ μ ϵ])
-        CSV.write(fnamecsv, df)
-        @debug("\tℓ = $ℓ, μ = $μ, ϵ = $ϵ ")
-        flush(io)
+        fn = "results/$city-nr-$run-l-$(Int(round(ℓ))).csv"
+        df = DataFrame(ell=dist, nr=nremoved)
+        CSV.write(fn, df)
     end
 end
-
-function getWeights(fname = "data/fortaleza_traveltime.jld")
-    traveltime = load(fname, "traveltime")
-    N = nv(g)
-    weightmx = spzeros(N,N)
-    for e in edges(g)
-        i, j = e.src, e.dst
-        weightmx[i,j] = 0.06
-        τ = traveltime[(i,j)]/distmx[i,j]
-        if τ > 0.06
-            weightmx[i,j] = τ
-        end
-    end
-    return weightmx
-end
-
-close(io)

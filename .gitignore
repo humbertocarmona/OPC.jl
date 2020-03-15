@@ -4,7 +4,6 @@
 *.vtu
 *.jld
 .DS_Store
-log.txt
 .vscode*
 .directory
 key
@@ -15,3 +14,4 @@ cache*
 /snaps/
 /Manifest.toml
 /dev/
+/logs/

@@ -1,8 +1,8 @@
 function buildCityNetwork(efile::String, nfile::String)
     es = CSV.read(efile)|>DataFrame
     ns = CSV.read(nfile)|>DataFrame
-    g, coords, distmx, eidic = buildCityNetwork(es, ns)
-    return g, coords, distmx, eidic
+    g, coords, distmx, weightmx, eidic = buildCityNetwork(es, ns)
+    return g, coords, distmx, weightmx, eidic
 end
 
 
@@ -15,14 +15,17 @@ function buildCityNetwork(es::DataFrame, ns::DataFrame)
     nns = size(ns, 1)  # number of nodes
 
     distmx = spzeros(nns, nns)
+    weightmx = spzeros(nns, nns)
     g = SimpleDiGraph(nns)
 
     for i = 1:nes
         s = es.src[i]
         d = es.dst[i]
-        l = es.length[i]
+        l = es.len[i]
+        w = es.tt[i]
         if add_edge!(g, s, d)
             distmx[s, d] = l
+            weightmx[s, d] = w
         else
             println("problem w/ ($s, $d)")
         end
@@ -47,5 +50,5 @@ function buildCityNetwork(es::DataFrame, ns::DataFrame)
     end
 
 
-    return g, coords, distmx, eidic
+    return g, coords, distmx, weightmx, eidic
 end
