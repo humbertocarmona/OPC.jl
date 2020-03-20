@@ -9,9 +9,10 @@ using HTTP
 using JSON
 using Dates
 using Random
-using Geodesy
 using Statistics
+using Distributions
 using LinearAlgebra
+using Geodesy
 using Logging
 
 function __init__()
@@ -29,4 +30,8 @@ include("odMatrix.jl")
 include("crackOptimalPaths.jl")
 include("writeShapeFile.jl")
 include("writeGML.jl")
+include("DisorderDist.jl")
+
+export DesorderDist, rand
+
 end # module

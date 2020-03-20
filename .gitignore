@@ -8,10 +8,12 @@
 .directory
 key
 cache*
+Manifest.toml
 /results/
+/snaps/
 /data/
 /temp/
-/snaps/
-/Manifest.toml
+/runs/
 /dev/
 /logs/
+/Figs/

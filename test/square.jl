@@ -5,39 +5,58 @@ using Statistics
 using CSV, DataFrames
 using Logging
 using ArgParse
+using Distributions
 
 function parse_commandline()
     s = ArgParseSettings()
     @add_arg_table! s begin
         "--l1"
-            arg_type = Float64
-            default = 1000.0
+        arg_type = Float64
+        default = 1000.0
         "--l2"
-            arg_type = Float64
-            default = 1000.0
+        arg_type = Float64
+        default = 1000.0
         "--dl"
-            arg_type = Float64
-            default = 500.0
+        arg_type = Float64
+        default = 500.0
         "--nsamples", "-n"
-            arg_type = Int
-            default = 500
+        arg_type = Int
+        default = 500
         "--nx"
-            arg_type = Int
-            default = 80
+        arg_type = Int
+        default = 80
         "--runid"
-            arg_type = Int
-            default = 1
+        arg_type = Int
+        default = 1
         "--prob"
-            arg_type = Float64
-            default = 0.6
+        arg_type = Float64
+        default = 0.6
         "--beta"
-            arg_type = Float64
-            default = 0.002
-        end
+        arg_type = Float64
+        default = 0.002
+        "--logdir"
+        arg_type = String
+        default = "logs"
+        "--resdir"
+        arg_type = String
+        default = "results"
+    end
     return parse_args(s)
 end
 
 parsed_args = parse_commandline()
+# parsed_args = Dict{String,Any}(
+#    "l1" => 1000.0,
+#    "l2" => 1000.0,
+#    "dl" => 1.0,
+#    "nsamples" => 1,
+#    "runid" => 1,
+#    "prob" => 0.6,
+#    "beta" => 0.002,
+#    "nx" => 80,
+#    "logdir" => "logs",
+#    "resdir" => "results",
+# )
 
 l1 = parsed_args["l1"]
 l2 = parsed_args["l2"]
@@ -47,14 +66,25 @@ runid = parsed_args["runid"]
 p = parsed_args["prob"]
 β = parsed_args["beta"]
 nx = parsed_args["nx"]
+logdir = parsed_args["logdir"]
+resdir = parsed_args["resdir"]
+
+dist = OPC.DisorderDist(β)
+
+df = CSV.read("../../data/boston-edges-4h.csv")|> DataFrame
+df[!,:tau] = df.tt ./ df.len
+n = size(df.tau,1)
+edges = collect(0:0.02:0.75)
+w = edges[2:end] - edges[1:end-1]
+dist = fit_mle(LogNormal, df.tau)
 
 
-mkpath("logs")
-mkpath("results")
+mkpath(logdir)
+mkpath(resdir)
 
 tinit = Dates.now()
 tinits = Dates.format(tinit, "ddmmyy-HHhMM-SS")
-io = open("logs/run$runid-$tinits.log", "w+")
+io = open("$logdir/run$runid-$tinits.log", "w+")
 logger = SimpleLogger(io, Logging.Debug)
 global_logger(logger)
 with_logger(logger) do
@@ -65,6 +95,7 @@ with_logger(logger) do
     --------------------------")
     flush(io)
     # if here, same network for each ℓ
+    global weightmx = []
     for ℓ in collect(l1:dl:l2)
         # if here, one network for each ℓ
         nremoved = []
@@ -72,38 +103,48 @@ with_logger(logger) do
         for sample = 1:ns
             # if here, one network for each od....
             seed = Dates.value(DateTime(Dates.now()))
-            g, coords, weightmx,dd = OPC.buildSquareNetwork(nx, nx, p = p, β = β,seed=seed, od=false)
-            res_cellList = OPC.cellList(coords; cellWidth=100.0)
-            OD = OPC.odMatrix(ℓ, res_cellList;
-                               nDstOrg=1,
-                               seed=seed,
-                               ns=1,
-                               square=false,
-                               δ = 0.001)
+            g, coords, weightmx, dd = OPC.buildSquareNetwork(
+                nx,
+                nx,
+                p = p,
+                dist = dist,
+                seed = seed,
+                od = false,
+            )
+            res_cellList = OPC.cellList(coords; cellWidth = 100.0)
+            OD = OPC.odMatrix(
+                ℓ,
+                res_cellList;
+                nDstOrg = 1,
+                seed = seed,
+                ns = 1,
+                square = false,
+                δ = 0.001,
+            )
 
-            (orig, dest)  = OD[1]
+            (orig, dest) = OD[1]
 
             p1 = LLA(coords[orig][1], coords[orig][2], 0.0)
             p2 = LLA(coords[dest][1], coords[dest][2], 0.0)
             nrem, gr, rmmx = OPC.crackOptimalPaths(g, orig, dest, weightmx)
-            # if sample == 1 && ℓ==4000.0
+            # if sample == 1 && ℓ==1000.0
             #     fname = "results/l$(ℓ)-beta$(β)-p$(p).gpkg"
             #     OPC.writeShapeFile(g, coords, rmmx,fname)
             # end
-            if mod(sample, 100)==0
+            if mod(sample, 100) == 0
                 @debug("ℓ = $ℓ, sample = $sample, $(mean(nremoved))")
                 flush(io)
             end
             push!(nremoved, nrem)
-            push!(measdist, distance(p1,p2))
+            push!(measdist, distance(p1, p2))
         end
-        fn = "results/square-nr-$runid-l-$(Int(round(ℓ))).csv"
-        df = DataFrame(ell=measdist, nr=nremoved)
+        fn = "$resdir/square-nr-$runid-l-$(Int(round(ℓ))).csv"
+        df = DataFrame(ell = measdist, nr = nremoved)
         CSV.write(fn, df)
     end
     tend = Dates.now()
     tinits = Dates.format(tinit, "ddmmyy-HHhMM-SS")
-    dur = Dates.canonicalize(Dates.CompoundPeriod(tend-tinit))
+    dur = Dates.canonicalize(Dates.CompoundPeriod(tend - tinit))
     @info("----------- finished -----------------
     $(Dates.format(tend, "yy-mm-dd H:M"))
     took  $dur
@@ -111,3 +152,7 @@ with_logger(logger) do
     flush(io)
 end
 close(io)
+
+#vals = [i for i in findnz(weightmx)[3]]
+#df = DataFrame(Dict("val"=>vals))
+#CSV.write("vals.csv", df)

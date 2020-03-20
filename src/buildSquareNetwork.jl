@@ -8,21 +8,15 @@ function n2ij(n, nx)
     return i,j+1
 end
 
-function dist(β)
-    """
-    disorder
-    """
-    return exp(β*(Random.rand() - 1.0))
-end
-
 function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
-                            β::Float64=0.002, seed::Int64 = 123,
+                            dist, seed::Int64 = 123,
                             od::Bool = true,
                             pbc::Bool = false)
     """
         nx, ny: network size
         p: probability of bidirect edges
-        β: desorder degree
+        dist: distribution to generate weights - DesorderDist is defined here,
+              but it can be anyone defined in Distributions
 
         add one abobe the top row and one below to the bottom row
 
@@ -71,22 +65,22 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
                 if unidirected
                     right = Random.rand()>0.5 # choose direction
                     if right
-                        ϵ = dist(β)
+                        ϵ = Random.rand(dist)
                         add_edge!(g, s,d)
                         weightmx[s,d] = ϵ
                         en+=1
                     else
-                        ϵ = dist(β)
+                        ϵ = Random.rand(dist)
                         add_edge!(g, d,s)
                         weightmx[d,s] = ϵ
                         en+=1
                     end
                 else # add bi-directed
-                    ϵ = dist(β)
+                    ϵ = Random.rand(dist)
                     add_edge!(g, s,d)
                     weightmx[s,d] = ϵ
 
-                    ϵ = dist(β)
+                    ϵ = Random.rand(dist)
                     add_edge!(g, d,s)
                     weightmx[d,s] = ϵ
                     en+=1
@@ -97,22 +91,22 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
                 if unidirected
                     right = Random.rand()>0.5 # choose direction
                     if right
-                        ϵ = dist(β)
+                        ϵ = Random.rand(dist)
                         add_edge!(g, s,d)
                         weightmx[s,d] = ϵ
                         en+=1
                     else
-                        ϵ = dist(β)
+                        ϵ = Random.rand(dist)
                         add_edge!(g, d,s)
                         weightmx[d,s] = ϵ
                         en+=1
                     end
                 else # add bi-directed
-                    ϵ = dist(β)
+                    ϵ = Random.rand(dist)
                     add_edge!(g, s,d)
                     weightmx[s,d] = ϵ
 
-                    ϵ = dist(β)
+                    ϵ = Random.rand(dist)
                     add_edge!(g, d,s)
                     weightmx[d,s] = ϵ
                     en+=1
@@ -126,21 +120,21 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
                 if unidirected
                     up = Random.rand()>0.5 # choose direction
                     if up
-                        ϵ = dist(β)
+                        ϵ = Random.rand(dist)
                         add_edge!(g, s,d)
                         weightmx[s,d] = ϵ
                         en+=1
                     else
-                        ϵ = dist(β)
+                        ϵ = Random.rand(dist)
                         add_edge!(g, d,s)
                         weightmx[d,s] = ϵ
                     end
                     else # add bi-directed - each direction has a different weight
-                    ϵ = dist(β)
+                    ϵ = Random.rand(dist)
                     add_edge!(g, s,d)
                     weightmx[s,d] = ϵ
 
-                    ϵ = dist(β)
+                    ϵ = Random.rand(dist)
                     add_edge!(g, d,s)
                     weightmx[d,s] = ϵ
                 end
@@ -166,18 +160,6 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
         push!(coords, Tuple(center+[0.5*(nx-1.0)*dx, -1.0*dy]))
         push!(coords, Tuple(center+[0.5*(nx-1.0)*dx, (ny+1.0)*dy]))
     end
-
-    # just for debbuginh
-    # i = 4
-    # j = 3
-    # o = ij2n(i,j, nx)
-    # po = LLA(coords[o][1],coords[o][2],0.0)
-    # for j = 1:10
-    #     d = ij2n(i,j,nx)
-    #     pd = LLA(coords[d][1],coords[d][2],0.0)
-    #     dist = distance(po, pd)
-    #     @debug("$o - $d  = $(dist)")
-    # end
 
     return g, coords, weightmx, 0
 end

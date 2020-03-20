@@ -27,7 +27,7 @@ function odMatrix(ℓ::Float64,
     n = 0
     maxorig = 0
     while n < ns && maxorig < nnodes
-        o = rand(1:nnodes)
+        o = Random.rand(collect(1:nnodes))
         orig = LLA(coords[o][1], coords[o][2], 0.0)
 
         pO = pos[o]
