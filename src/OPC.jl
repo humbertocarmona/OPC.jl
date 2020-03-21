@@ -1,3 +1,5 @@
+__precompile__()
+
 module OPC
 
 using DataFrames
@@ -14,6 +16,10 @@ using Distributions
 using LinearAlgebra
 using Geodesy
 using Logging
+import Random:rand
+
+export DisorderDist, rand
+
 
 function __init__()
     global logger = SimpleLogger(stdout, Logging.Info)
@@ -32,6 +38,5 @@ include("writeShapeFile.jl")
 include("writeGML.jl")
 include("DisorderDist.jl")
 
-export DesorderDist, rand
 
 end # module

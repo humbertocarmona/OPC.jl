@@ -1,12 +1,12 @@
 using OPC
 using Geodesy
 using Dates
-using Statistics
+# using Statistics
 using CSV, DataFrames
 using Logging
 using ArgParse
 using Distributions
-
+using Random
 function parse_commandline()
     s = ArgParseSettings()
     @add_arg_table! s begin
@@ -33,7 +33,7 @@ function parse_commandline()
         default = 0.6
         "--beta"
         arg_type = Float64
-        default = 0.002
+        default = -1.0
         "--logdir"
         arg_type = String
         default = "logs"
@@ -52,7 +52,7 @@ parsed_args = parse_commandline()
 #    "nsamples" => 1,
 #    "runid" => 1,
 #    "prob" => 0.6,
-#    "beta" => 0.002,
+#    "beta" => 0.06,
 #    "nx" => 80,
 #    "logdir" => "logs",
 #    "resdir" => "results",
@@ -69,14 +69,18 @@ nx = parsed_args["nx"]
 logdir = parsed_args["logdir"]
 resdir = parsed_args["resdir"]
 
-dist = OPC.DisorderDist(β)
 
-df = CSV.read("../../data/boston-edges-4h.csv")|> DataFrame
-df[!,:tau] = df.tt ./ df.len
-n = size(df.tau,1)
-edges = collect(0:0.02:0.75)
-w = edges[2:end] - edges[1:end-1]
-dist = fit_mle(LogNormal, df.tau)
+global dist = β
+if β < 0
+    # in case I want some other distribution I can read from a file
+    df = CSV.read("../../data/boston-edges-4h.csv")|> DataFrame
+    df[!,:tau] = df.tt ./ df.len
+    n = size(df.tau,1)
+    edges = collect(0:0.02:0.75)
+    w = edges[2:end] - edges[1:end-1]
+    dist = fit_mle(LogNormal, df.tau)
+end
+
 
 
 mkpath(logdir)
@@ -85,8 +89,8 @@ mkpath(resdir)
 tinit = Dates.now()
 tinits = Dates.format(tinit, "ddmmyy-HHhMM-SS")
 io = open("$logdir/run$runid-$tinits.log", "w+")
-logger = SimpleLogger(io, Logging.Debug)
-global_logger(logger)
+logger = SimpleLogger(io, Logging.Info)
+#global_logger(logger)
 with_logger(logger) do
     @info("--------------------------
     $(Dates.format(tinit, "yy-mm-dd H:M"))
@@ -132,7 +136,7 @@ with_logger(logger) do
             #     OPC.writeShapeFile(g, coords, rmmx,fname)
             # end
             if mod(sample, 100) == 0
-                @debug("ℓ = $ℓ, sample = $sample, $(mean(nremoved))")
+                @info("ℓ = $ℓ, sample = $sample, $(mean(nremoved))")
                 flush(io)
             end
             push!(nremoved, nrem)

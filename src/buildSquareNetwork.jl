@@ -36,6 +36,11 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
        I=1    2    3    4    5    6      J
     """
 
+    if isa(dist,Float64)
+        dist = DisorderDist(dist)
+    end
+    println("")
+    println(dist)
 
     Random.seed!(seed)
     nvertices = nx*ny
@@ -61,52 +66,52 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
             #add horizontal
             if i<nx
                 d=ij2n(i+1,j, nx)
-                unidirected = p > Random.rand()    # bidirected edge?
+                unidirected = p > rand()    # bidirected edge?
                 if unidirected
-                    right = Random.rand()>0.5 # choose direction
+                    right = rand()>0.5 # choose direction
                     if right
-                        ϵ = Random.rand(dist)
+                        ϵ = rand(dist)
                         add_edge!(g, s,d)
                         weightmx[s,d] = ϵ
                         en+=1
                     else
-                        ϵ = Random.rand(dist)
+                        ϵ = rand(dist)
                         add_edge!(g, d,s)
                         weightmx[d,s] = ϵ
                         en+=1
                     end
                 else # add bi-directed
-                    ϵ = Random.rand(dist)
+                    ϵ = rand(dist)
                     add_edge!(g, s,d)
                     weightmx[s,d] = ϵ
 
-                    ϵ = Random.rand(dist)
+                    ϵ = rand(dist)
                     add_edge!(g, d,s)
                     weightmx[d,s] = ϵ
                     en+=1
                 end
             elseif pbc
                 d = ij2n(1,j, nx)
-                unidirected = p > Random.rand()    # bidirected edge?
+                unidirected = p > rand()    # bidirected edge?
                 if unidirected
-                    right = Random.rand()>0.5 # choose direction
+                    right = rand()>0.5 # choose direction
                     if right
-                        ϵ = Random.rand(dist)
+                        ϵ = rand(dist)
                         add_edge!(g, s,d)
                         weightmx[s,d] = ϵ
                         en+=1
                     else
-                        ϵ = Random.rand(dist)
+                        ϵ = rand(dist)
                         add_edge!(g, d,s)
                         weightmx[d,s] = ϵ
                         en+=1
                     end
                 else # add bi-directed
-                    ϵ = Random.rand(dist)
+                    ϵ = rand(dist)
                     add_edge!(g, s,d)
                     weightmx[s,d] = ϵ
 
-                    ϵ = Random.rand(dist)
+                    ϵ = rand(dist)
                     add_edge!(g, d,s)
                     weightmx[d,s] = ϵ
                     en+=1
@@ -116,25 +121,25 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
             #add vertical
             if j<ny
                 d=ij2n(i,j+1, nx)
-                unidirected = p > Random.rand()    # bidirected edge?
+                unidirected = p > rand()    # bidirected edge?
                 if unidirected
-                    up = Random.rand()>0.5 # choose direction
+                    up = rand()>0.5 # choose direction
                     if up
-                        ϵ = Random.rand(dist)
+                        ϵ = rand(dist)
                         add_edge!(g, s,d)
                         weightmx[s,d] = ϵ
                         en+=1
                     else
-                        ϵ = Random.rand(dist)
+                        ϵ = rand(dist)
                         add_edge!(g, d,s)
                         weightmx[d,s] = ϵ
                     end
                     else # add bi-directed - each direction has a different weight
-                    ϵ = Random.rand(dist)
+                    ϵ = rand(dist)
                     add_edge!(g, s,d)
                     weightmx[s,d] = ϵ
 
-                    ϵ = Random.rand(dist)
+                    ϵ = rand(dist)
                     add_edge!(g, d,s)
                     weightmx[d,s] = ϵ
                 end
