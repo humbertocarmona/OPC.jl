@@ -1,12 +1,14 @@
 using OPC
 using Geodesy
 using Dates
-# using Statistics
+using Statistics
 using CSV, DataFrames
 using Logging
 using ArgParse
+
 using Distributions
 using Random
+
 function parse_commandline()
     s = ArgParseSettings()
     @add_arg_table! s begin
@@ -26,8 +28,8 @@ function parse_commandline()
         arg_type = Int
         default = 80
         "--runid"
-        arg_type = Int
-        default = 1
+        arg_type = String
+        default = "1"
         "--prob"
         arg_type = Float64
         default = 0.6
@@ -62,7 +64,7 @@ l1 = parsed_args["l1"]
 l2 = parsed_args["l2"]
 dl = parsed_args["dl"]
 ns = parsed_args["nsamples"]
-runid = parsed_args["runid"]
+runid = lpad(parsed_args["runid"],3,"0")
 p = parsed_args["prob"]
 β = parsed_args["beta"]
 nx = parsed_args["nx"]
@@ -142,12 +144,11 @@ with_logger(logger) do
             push!(nremoved, nrem)
             push!(measdist, distance(p1, p2))
         end
-        fn = "$resdir/square-nr-$runid-l-$(Int(round(ℓ))).csv"
+        fn = "$resdir/$resdir-nr-$runid-l-$(Int(round(ℓ))).csv"
         df = DataFrame(ell = measdist, nr = nremoved)
         CSV.write(fn, df)
     end
     tend = Dates.now()
-    tinits = Dates.format(tinit, "ddmmyy-HHhMM-SS")
     dur = Dates.canonicalize(Dates.CompoundPeriod(tend - tinit))
     @info("----------- finished -----------------
     $(Dates.format(tend, "yy-mm-dd H:M"))

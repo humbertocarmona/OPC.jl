@@ -22,7 +22,7 @@ export DisorderDist, rand
 
 
 function __init__()
-    global logger = SimpleLogger(stdout, Logging.Info)
+    global logger = SimpleLogger(stdout, Logging.Debug)
     global_logger(logger)
 end
 

@@ -39,8 +39,6 @@ function buildSquareNetwork(nx::Int, ny::Int; p::Float64=0.5,
     if isa(dist,Float64)
         dist = DisorderDist(dist)
     end
-    println("")
-    println(dist)
 
     Random.seed!(seed)
     nvertices = nx*ny

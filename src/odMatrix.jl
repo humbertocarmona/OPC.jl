@@ -26,7 +26,7 @@ function odMatrix(ℓ::Float64,
     odMatrix = []
     n = 0
     maxorig = 0
-    while n < ns && maxorig < nnodes
+    while n < ns && maxorig < 100*nnodes
         o = Random.rand(collect(1:nnodes))
         orig = LLA(coords[o][1], coords[o][2], 0.0)
 
@@ -66,11 +66,13 @@ function odMatrix(ℓ::Float64,
                         i,j = n2ij(d, nx)
                         foundDst = (abs(dist - ℓ) < δ) && ((o, d) ∉ odMatrix)
                         if foundDst
-                            #@debug("$(n+1) ($i0, $j0) - ($i, $j) distance = $dist")
-                            push!(odMatrix, (o, d))
-                            n = n + 1
-                            if n ≥ ns
-                                break
+                            @debug("$(n+1) ($i0, $j0) - ($i, $j) distance = $dist")
+                            if !((o,d) in odMatrix)
+                                push!(odMatrix, (o, d))
+                                n = n + 1
+                                if n ≥ ns
+                                    break
+                                end
                             end
                         end
                         d = next[d]  # next node in cell

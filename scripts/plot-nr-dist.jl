@@ -11,11 +11,11 @@ theme(:wong2)
 # Plots.showtheme(:vibrant)
 
 include("utils.jl")
-files = findFilesMaching(r"square-nr-00-l-.+\.csv","./results/square/p06beta002")
+files = findFilesMaching(r"square-nr-00-l-.+\.csv","./runs/square/p0.6boston/")
 p1 = plot(
     size = (400, 300),
-    legendfontsize = 9,
-    legend=:topleft,
+    legendfontsize = 5,
+    legend=:bottomleft,
     top_margin = 3mm,
     bottom_margin = 3mm,
     left_margin=3mm,
@@ -38,7 +38,8 @@ for f in files
     mi = minimum(nr)
     ma = maximum(nr)
 
-    edges = collect(range(mi, stop=ma, length=30))
+    edges = collect(range(1,stop=500, length=50))
+    # edges = collect(range(mi, stop=ma, length=30))
     w = edges[2:end] - edges[1:end-1]
     h, c = hist(nr, edges, norm=true)
     i = findall(x->x>0.0, h)
@@ -47,7 +48,8 @@ for f in files
     i = findall(x->x>0.0, c)
     h = h[i]
     c = c[i]
-    l=L"L = "*"$(fname)"*L", \left<nr\right> = "*"$(round.(mean(nr); digits=1))"
+    #l=L"L = "*"$(fname)"*L", \left<nr\right> = "*"$(round.(mean(nr); digits=1))"
+    l="$(fname) $(round.(mean(nr); digits=1))"
     plot!(c, log10.(h), label=l)
 end
 p1
